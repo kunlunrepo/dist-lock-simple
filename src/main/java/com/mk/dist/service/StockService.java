@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.concurrent.locks.ReentrantLock;
 
@@ -14,14 +15,30 @@ import java.util.concurrent.locks.ReentrantLock;
  * @author kunlunrepo
  * date :  2024-01-04 17:16
  */
-@Scope(value = "prototype", proxyMode = ScopedProxyMode.TARGET_CLASS)
+//@Scope(value = "prototype", proxyMode = ScopedProxyMode.TARGET_CLASS)
 @Service
 public class StockService {
 
     @Autowired
     private StockDao stockDao;
 
+    /**
+     * 执行逻辑：
+     * 1.开启事务
+     * 2.加锁
+     * 3.释放锁
+     * 4.提交事务
+     *
+     * 描述：
+     * A和 B并发请求
+     * B在释放锁之后去执行，但是事务未提交读的数据是错误的
+     *
+     * 改进：
+     * 先加锁，再开启事务；先提交事务，再释放锁
+     */
+    @Transactional(rollbackFor = Exception.class)
     public synchronized String deductStock(Long goodId, Integer count) {
+//    public String deductStock(Long goodId, Integer count) {
         // 1.查询商品的库存数量
         Integer stock = stockDao.selectStockByGoodsId(goodId);
 
