@@ -8,7 +8,7 @@ import org.apache.ibatis.annotations.Update;
 /**
  * description :
  *
- * @author zhoujian
+ * @author kunlunrepo
  * date :  2024-01-04 17:14
  */
 @Mapper
