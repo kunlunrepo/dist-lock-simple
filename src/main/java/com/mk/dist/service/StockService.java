@@ -16,7 +16,7 @@ public class StockService {
     @Autowired
     private StockDao stockDao;
 
-    public String deductStock(Long goodId, Integer count) {
+    public synchronized String deductStock(Long goodId, Integer count) {
         // 1.查询商品的库存数量
         Integer stock = stockDao.selectStockByGoodsId(goodId);
 
